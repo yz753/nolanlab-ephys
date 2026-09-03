@@ -1,13 +1,15 @@
 from eddie_helper.make_scripts import run_python_script, run_stage_script
 from argparse import ArgumentParser
 from pathlib import Path
-from common_paths import  eddie_active_projects
 import os
 import pandas as pd
 import time
 
 eddie_yiming_data_folder = Path('exports/eddie/scratch/chalcrow/yiming/raw')
 eddie_yiming_deriv_folder = Path('exports/eddie/scratch/chalcrow/yiming/derivatives')
+eddie_active_projects = Path(
+    "/exports/cmvm/datastore/sbms/groups/INCR-NolanLab/ActiveProjects"
+)
 
 def filepath_from_mouse_day_sessions(mouse, day, sessions, path_to_all_filepaths):
     
