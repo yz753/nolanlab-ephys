@@ -87,13 +87,10 @@ def do_sorting_pipeline_concat_then_split(
         # We have one big sorting from our concatenated recordings. Split this into individual sessions:
         recording_total_samples = recording.get_total_samples()
 
-        # this creates one (shank-by-shank) sorting for the session (e.g. picks out just VR
-        # from a OF-VR recording)
-        one_sorting = {sorting_group_index: 
-            si.remove_excess_spikes(sorting_group, concatenated_recording).frame_slice(
-                cumulative_samples, cumulative_samples + recording_total_samples
+        one_sorting = {sorting_group_index: si.remove_excess_spikes(sorting_group, concatenated_recording).frame_slice(
+            cumulative_samples, cumulative_samples + recording_total_samples
         ) for sorting_group_index, sorting_group in sorting.items()}
-
+        
         cumulative_samples += recording_total_samples
 
         pipeline_for_analyzer = si.PreprocessingPipeline(
