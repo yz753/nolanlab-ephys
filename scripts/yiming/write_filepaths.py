@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Iterable
 from collections import defaultdict
 import re
-from common_paths import eddie_yiming_csv_path, local_yiming_csv_path
+from common_paths import local_yiming_csv_path
 
 '''This searchs for *ALL* raw ephys recording folders and writes to the yiming_filepaths.csv file.
 It also checks if the naming format is correct: M*_D* and days should be continuous, no gap.'''
@@ -79,24 +79,12 @@ def write_df(sorted_paths, root):
 
 
 def main():
-    # define root & csv paths based on running the script on EDDIE or local machine
-    env = input('Select environment (eddie/local): ').strip().lower()
-    if env == 'eddie':
-        root = Path('/exports/cmvm/datastore/sbms/groups/INCR-NolanLab/ActiveProjects/Yiming/NWR1/ephys/raw')
-        csv_path = eddie_yiming_csv_path
-    elif env == 'local':
-        root = Path('/Volumes/INCR-NolanLab/ActiveProjects/Yiming/NWR1/ephys/raw')
-        csv_path = local_yiming_csv_path
-    else:
-        print('Invalid input. Please choose "eddie" or "local".', flush=True)
-        return
-    
+    root = Path('/Volumes/INCR-NolanLab/ActiveProjects/Yiming/NWR1/ephys/raw')
     all_recording_paths = search_paths(root)
     sorted_recording_paths = check_and_sort_paths(all_recording_paths)
     # write to csv
     df = write_df(sorted_recording_paths, root)
-    
-    df.to_csv(csv_path, index=False)
+    df.to_csv(local_yiming_csv_path, index=False)
     
     
     
