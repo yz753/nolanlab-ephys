@@ -79,21 +79,22 @@ def write_df(sorted_paths, root):
 
 
 def main():
-    root = Path('/Volumes/INCR-NolanLab/ActiveProjects/Yiming/NWR1/ephys/raw')
-    all_recording_paths = search_paths(root)
-    sorted_recording_paths = check_and_sort_paths(all_recording_paths)
-    # write to csv
-    df = write_df(sorted_recording_paths, root)
-    
-    # define csv paths based on running the script on EDDIE or local machine
+    # define root & csv paths based on running the script on EDDIE or local machine
     env = input('Select environment (eddie/local): ').strip().lower()
     if env == 'eddie':
+        root = Path('/exports/cmvm/datastore/sbms/groups/INCR-NolanLab/ActiveProjects/Yiming/NWR1/ephys/raw')
         csv_path = eddie_yiming_csv_path
     elif env == 'local':
+        root = Path('/Volumes/INCR-NolanLab/ActiveProjects/Yiming/NWR1/ephys/raw')
         csv_path = local_yiming_csv_path
     else:
         print('Invalid input. Please choose "eddie" or "local".', flush=True)
         return
+    
+    all_recording_paths = search_paths(root)
+    sorted_recording_paths = check_and_sort_paths(all_recording_paths)
+    # write to csv
+    df = write_df(sorted_recording_paths, root)
     
     df.to_csv(csv_path, index=False)
     
