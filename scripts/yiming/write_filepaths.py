@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Iterable
 from collections import defaultdict
 import re
+from common_paths import eddie_yiming_csv_path, local_yiming_csv_path
 
 '''This searchs for *ALL* raw ephys recording folders and writes to the yiming_filepaths.csv file.
 It also checks if the naming format is correct: M*_D* and days should be continuous, no gap.'''
@@ -10,9 +11,9 @@ It also checks if the naming format is correct: M*_D* and days should be continu
 def search_paths(root: str|Path) -> list[tuple[str, Path]]:
     all_recording_paths = []
     for session in ('VR', 'OF'):
-        rel_path = root / 'Yiming/NWR1/ephys/raw' / session
+        rel_path = root / session
         if not rel_path.is_dir():
-            print(f'{session} session folder does not exist.')
+            print(f'{session} session folder does not exist.', flush=True)
             continue
         for path in rel_path.rglob(f"*"):
             if path.is_dir() and (path/'Record Node 101').is_dir():
@@ -32,7 +33,7 @@ def check_and_sort_paths(
         # check format
         match = format.fullmatch(path.name)
         if match is None:
-            print(f'Invalid folder name format: {path.name}.')
+            print(f'Invalid folder name format: {path.name}.', flush=True)
             continue
         mouse, day = int(match.group(1)), int(match.group(2))
         
@@ -49,7 +50,8 @@ def check_and_sort_paths(
         if gap:
             print(
                 f'Discontinuous sessions for mouse M{mouse},'
-                f'missing day(s): {", ".join(str(day) for day in gap)}'
+                f'missing day(s): {", ".join(str(day) for day in gap)}',
+                flush=True
             )
             return []
     
@@ -77,12 +79,23 @@ def write_df(sorted_paths, root):
 
 
 def main():
-    root = Path('/Volumes/INCR-NolanLab/ActiveProjects')
+    root = Path('/Volumes/INCR-NolanLab/ActiveProjects/Yiming/NWR1/ephys/raw')
     all_recording_paths = search_paths(root)
     sorted_recording_paths = check_and_sort_paths(all_recording_paths)
     # write to csv
     df = write_df(sorted_recording_paths, root)
-    df.to_csv('/Users/zhaoyiming/nolanlab-ephys/scripts/yiming/yiming_filepaths.csv', index=False)
+    
+    # define csv paths based on running the script on EDDIE or local machine
+    env = input('Select environment (eddie/local): ').strip().lower()
+    if env == 'eddie':
+        csv_path = eddie_yiming_csv_path
+    elif env == 'local':
+        csv_path = local_yiming_csv_path
+    else:
+        print('Invalid input. Please choose "eddie" or "local".', flush=True)
+        return
+    
+    df.to_csv(csv_path, index=False)
     
     
     

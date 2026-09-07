@@ -4,7 +4,7 @@ from pathlib import Path
 import os
 import pandas as pd
 import time
-from common_paths import root, eddie_yiming_data_folder, eddie_yiming_deriv_folder, eddie_yiming_csv_path, eddie_active_projects
+from common_paths import eddie_root, eddie_yiming_data_folder, eddie_yiming_deriv_folder, eddie_yiming_csv_path, eddie_datastore
 
 eddie_yiming_data_folder.mkdir(parents=True, exist_ok=True)
 eddie_yiming_deriv_folder.mkdir(parents=True, exist_ok=True)
@@ -30,6 +30,7 @@ parser.add_argument('--sessions')
 parser.add_argument('--protocol')
 parser.add_argument('--data_folder', default=None)
 parser.add_argument('--deriv_folder', default=None)
+parser.add_argument('--filepaths_csv', default=None)
 parser.add_argument('--email', default=None)
 
 mice_string = parser.parse_args().mice
@@ -66,9 +67,10 @@ email = parser.parse_args().email
 if email is None:
     email = "y.zhao@ed.ac.uk"
 
-path_to_all_filepaths = eddie_yiming_csv_path
-
-active_projects_path = eddie_active_projects
+filepaths_csv = parser.parse_args().filepaths_csv
+if filepaths_csv is None:
+    filepaths_csv = eddie_yiming_csv_path
+path_to_all_filepaths = Path(filepaths_csv)
 
 for mouse in mice:
     for day in days:
@@ -77,13 +79,12 @@ for mouse in mice:
         
         stagein_dict = {}
         for recording_path in recording_paths:
-            recording_folder_name = Path(recording_path).name
             if "OF" in recording_path:
                 session_type_folder = data_folder / "OF"
-                stagein_dict[f"{active_projects_path / recording_path}"] = session_type_folder
+                stagein_dict[f"{eddie_datastore / 'raw'/ recording_path}"] = session_type_folder
             elif "VR" in recording_path:
                 session_type_folder = data_folder / "VR"
-                stagein_dict[f"{active_projects_path / recording_path}"] = session_type_folder
+                stagein_dict[f"{eddie_datastore / 'raw'/ recording_path}"] = session_type_folder
             else: # invalid session type
                 print(f"Invalid session type in recording path: {recording_path}", flush=True)
                 continue
@@ -92,21 +93,21 @@ for mouse in mice:
         
         stageout_dict = {}
         for session in sessions:
-            stageout_dict[deriv_folder / f"M{mouse:02d}/D{day:02d}/{session}/{protocol}"] = eddie_active_projects / "Yiming/NWR1/ephys/derivatives" / f"M{mouse:02d}/D{day:02d}/{session}/"
-            stageout_dict[deriv_folder / f"M{mouse:02d}/D{day:02d}/M{mouse:02d}_D{day:02d}_probe_layout.png"] = eddie_active_projects / "Yiming/NWR1/ephys/derivatives" / f"M{mouse:02d}/D{day:02d}/"
+            stageout_dict[deriv_folder / f"M{mouse:02d}/D{day:02d}/{session}/{protocol}"] = eddie_datastore / "derivatives" / f"M{mouse:02d}/D{day:02d}/{session}/"
+            stageout_dict[deriv_folder / f"M{mouse:02d}/D{day:02d}/M{mouse:02d}_D{day:02d}_probe_layout.png"] = eddie_datastore / "derivatives" / f"M{mouse:02d}/D{day:02d}/"
         
         stagein_job_name = f"M{mouse}D{day}{sessions[0][:2]}in" 
         run_python_name = f"M{mouse}D{day}{sessions[0][:2]}run"
         quality_name = f"M{mouse}D{day}quality"
         stageout_job_name = f"M{mouse}D{day}{sessions[0][:2]}out" 
         
-        uv_directory = root / 'nolanlab-ephys/scripts/yiming'
-        python_arg = f"{uv_directory}/sort_on_comp.py --mouse={mouse} --day={day} --session={sessions_string} --protocol={protocol} --data_folder={data_folder} --deriv_folder={deriv_folder}"
-        quality_arg = f"{uv_directory}/quality_control.py --mouse={mouse} --day={day} --session={sessions_string} --protocol={protocol} --data_folder={data_folder} --deriv_folder={deriv_folder}"
+        uv_directory = eddie_root / 'nolanlab-ephys/scripts/yiming'
+        python_arg = f"{uv_directory}/sort_on_comp.py --mice={mouse} --days={day} --sessions={sessions_string} --protocols={protocol} --data_folder={data_folder} --deriv_folder={deriv_folder} --filepaths_csv={path_to_all_filepaths}"
+        quality_arg = f"{uv_directory}/quality_control.py --mice={mouse} --days={day} --sessions={sessions_string} --protocols={protocol} --data_folder={data_folder} --deriv_folder={deriv_folder} --filepaths_csv={path_to_all_filepaths}"
         
         run_stage_script(stagein_dict, job_name=stagein_job_name)
         run_python_script(uv_directory, python_arg, cores=8, email=email, staging=False, hold_jid=stagein_job_name, job_name=run_python_name)
         time.sleep(2)
         # Do quality control
         run_python_script(uv_directory, quality_arg, cores=8, email=email, staging=False, hold_jid=run_python_name, job_name=quality_name)
-        run_stage_script(stageout_dict, job_name=stageout_job_name, hold_jid=run_python_name)
+        run_stage_script(stageout_dict, job_name=stageout_job_name, hold_jid=quality_name)
