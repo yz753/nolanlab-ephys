@@ -88,13 +88,16 @@ for mouse in mice:
             else: # invalid session type
                 print(f"Invalid session type in recording path: {recording_path}", flush=True)
                 continue
-                
             session_type_folder.mkdir(exist_ok=True)
         
         stageout_dict = {}
         for session in sessions:
-            stageout_dict[deriv_folder / f"M{mouse:02d}/D{day:02d}/{session}/{protocol}"] = eddie_datastore / "derivatives" / f"M{mouse:02d}/D{day:02d}/{session}/"
-            stageout_dict[deriv_folder / f"M{mouse:02d}/D{day:02d}/M{mouse:02d}_D{day:02d}_probe_layout.png"] = eddie_datastore / "derivatives" / f"M{mouse:02d}/D{day:02d}/"
+            dest_folder = eddie_datastore / "derivatives" / f"M{mouse:02d}/D{day:02d}/"
+            dest_folder.mkdir(exist_ok=True)
+            (dest_folder / session).mkdir(exist_ok=True)
+            
+            stageout_dict[deriv_folder / f"M{mouse:02d}/D{day:02d}/{session}/{protocol}"] = dest_folder / f"{session}/"
+            stageout_dict[deriv_folder / f"M{mouse:02d}/D{day:02d}/M{mouse:02d}_D{day:02d}_probe_layout.png"] = dest_folder
         
         stagein_job_name = f"M{mouse}D{day}{sessions[0][:2]}in" 
         run_python_name = f"M{mouse}D{day}{sessions[0][:2]}run"
