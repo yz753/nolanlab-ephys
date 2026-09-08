@@ -17,4 +17,4 @@ local_yiming_data_folder = local_root / 'raw'
 
 local_yiming_deriv_folder = local_root / 'derivatives'
 
-local_yiming_csv_path = local_root / 'yiming_filepaths.csv'
+local_yiming_csv_path = Path('/Users/zhaoyiming/nolanlab-ephys/scripts/yiming/yiming_filepaths.csv')
