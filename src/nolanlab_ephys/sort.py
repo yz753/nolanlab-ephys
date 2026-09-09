@@ -78,7 +78,6 @@ def do_sorting_pipeline_concat_then_split(
         verbose=True,
         folder=sorting_output_folder,
     )
-    sorting = si.load(sorting_output_folder)
 
     cumulative_samples = 0
     for recording, analyzer_path in zip(recordings, analyzer_paths, strict=True):
@@ -108,7 +107,6 @@ def do_sorting_pipeline_concat_then_split(
             format="binary_folder",
             peak_sign="both",
             radius_um=70,
-            overwrite=True,
         )
 
         analyzer.compute(generic_postprocessing)
@@ -182,7 +180,6 @@ def do_sorting_pipeline_concat(
         verbose=True,
         folder=sorting_output_folder,
     )
-    sorting = si.load(sorting_output_folder)
 
     # we do all our syncing assuming that t=0 is at the start of the ephys data
     concatenated_recording.segments[0].t_start = 0
@@ -198,7 +195,6 @@ def do_sorting_pipeline_concat(
         format="binary_folder",
         peak_sign="both",
         radius_um=70,
-        overwrite=True,
     )
 
     analyzer.compute(generic_postprocessing)
