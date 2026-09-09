@@ -27,8 +27,8 @@ build-backend = "setuptools.build_meta"
 
 [tool.uv.sources]
 nolanlab-ephys = { workspace = true }
-eddie-helper = { git = "https://github.com/yz753/eddie_helper.git" }
 spikeinterface = { git = "https://github.com/SpikeInterface/spikeinterface.git" }
+eddie-helper = { git = "https://github.com/yz753/eddie_helper.git", branch = "main" }
 
 [dependency-groups]
 dev = [

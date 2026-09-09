@@ -93,8 +93,6 @@ for mouse in mice:
         stageout_dict = {}
         for session in sessions:
             dest_folder = eddie_datastore / "derivatives" / f"M{mouse:02d}/D{day:02d}/"
-            dest_folder.mkdir(exist_ok=True)
-            (dest_folder / session).mkdir(exist_ok=True)
             
             stageout_dict[deriv_folder / f"M{mouse:02d}/D{day:02d}/{session}/{protocol}"] = dest_folder / f"{session}/"
             stageout_dict[deriv_folder / f"M{mouse:02d}/D{day:02d}/M{mouse:02d}_D{day:02d}_probe_layout.png"] = dest_folder

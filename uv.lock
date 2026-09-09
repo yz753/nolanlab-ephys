@@ -536,7 +536,7 @@ wheels = [
 [[package]]
 name = "eddie-helper"
 version = "0.1.0"
-source = { git = "https://github.com/yz753/eddie_helper.git#03c1db6ba3996ce2f89b0680ddec4dcb65395b18" }
+source = { git = "https://github.com/yz753/eddie_helper.git?branch=main#ee13eb4155e4a098a7ecadea41323218b69cfa16" }
 
 [[package]]
 name = "executing"
@@ -1255,7 +1255,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "eddie-helper", git = "https://github.com/yz753/eddie_helper.git" },
+    { name = "eddie-helper", git = "https://github.com/yz753/eddie_helper.git?branch=main" },
     { name = "ipykernel", specifier = ">=6.29.5" },
     { name = "ipympl", specifier = ">=0.9.8" },
     { name = "ipywidgets", specifier = ">=8.1.7" },
