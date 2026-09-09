@@ -71,13 +71,13 @@ def do_sorting_pipeline_concat_then_split(
 
     preprocessing_pipeline = si.PreprocessingPipeline(protocol_info["preprocessing"])
     pp_recording = si.apply_preprocessing_pipeline(grouped_recording, preprocessing_pipeline)
-    sorting = si.run_sorter(
-        recording=pp_recording,
-        **protocol_info["sorting"],
-        remove_existing_folder=True,
-        verbose=True,
-        folder=sorting_output_folder,
-    )
+    # sorting = si.run_sorter(
+    #     recording=pp_recording,
+    #     **protocol_info["sorting"],
+    #     remove_existing_folder=True,
+    #     verbose=True,
+    #     folder=sorting_output_folder,
+    # )
     sorting = si.load(sorting_output_folder)
 
     cumulative_samples = 0
@@ -175,13 +175,13 @@ def do_sorting_pipeline_concat(
     pp_recording = si.apply_preprocessing_pipeline(
         concatenated_recording, protocol_info["preprocessing"]
     )
-    sorting = si.run_sorter(
-        recording=pp_recording,
-        **protocol_info["sorting"],
-        remove_existing_folder=True,
-        verbose=True,
-        folder=sorting_output_folder,
-    )
+    # sorting = si.run_sorter(
+    #     recording=pp_recording,
+    #     **protocol_info["sorting"],
+    #     remove_existing_folder=True,
+    #     verbose=True,
+    #     folder=sorting_output_folder,
+    # )
     sorting = si.load(sorting_output_folder)
 
     # we do all our syncing assuming that t=0 is at the start of the ephys data
