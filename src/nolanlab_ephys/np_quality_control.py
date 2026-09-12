@@ -95,7 +95,13 @@ def compute_noise_and_good_units(analyzer):
     unit_locations = analyzer.get_extension("unit_locations").get_data()
     bombcell_labels = bombcell_label_units(analyzer)["bombcell_label"].values
 
-    shank_ids = analyzer.get_probe().shank_ids
+    probegroup = analyzer.get_probegroup()
+    if len(probegroup.probes) == 1:
+        shank_ids = analyzer.get_probe().shank_ids
+    elif len(probegroup.probes) > 1:
+        contact_metadata = probegroup.to_numpy()
+        shank_ids = contact_metadata["probe_index"].astype(str)
+    
     unique_shanks = np.unique(shank_ids)
 
     good_units_per_shank = {"0": [], "1": [], "2": [], "3": []}
@@ -114,7 +120,7 @@ def compute_noise_and_good_units(analyzer):
     noise_per_shank = {"0": [], "1": [], "2": [], "3": []}
     noise_levels = analyzer.get_extension("noise_levels").get_data()
     for shank_id, channel_location, noise_level in zip(
-        analyzer.get_probe().shank_ids, analyzer.get_channel_locations(), noise_levels
+        shank_ids, analyzer.get_channel_locations(), noise_levels
     ):
         if (channel_location[0] % distance_between_shanks) == 0:
             y_locations_per_shank[shank_id].append(channel_location[1])
