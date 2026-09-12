@@ -95,20 +95,23 @@ for mouse in mice:
             dest_folder = eddie_datastore / "derivatives" / f"M{mouse:02d}/D{day:02d}/"
             
             stageout_dict[deriv_folder / f"M{mouse:02d}/D{day:02d}/{session}/{protocol}"] = dest_folder / f"{session}/"
-            stageout_dict[deriv_folder / f"M{mouse:02d}/D{day:02d}/M{mouse:02d}_D{day:02d}_probe_layout.png"] = dest_folder
+            stageout_dict[deriv_folder / f"M{mouse:02d}/D{day:02d}/{session}/M{mouse:02d}_D{day:02d}_probe_layout.png"] = dest_folder / f"{session}/"
         
         stagein_job_name = f"M{mouse}D{day}{sessions[0][:2]}in" 
-        run_python_name = f"M{mouse}D{day}{sessions[0][:2]}run"
+        run_python_name1 = f"M{mouse}D{day}{sessions[0][:2]}run"
+        run_python_name2 = f"M{mouse}D{day}{sessions[0][:2]}probeplot"
         quality_name = f"M{mouse}D{day}quality"
         stageout_job_name = f"M{mouse}D{day}{sessions[0][:2]}out" 
         
         uv_directory = eddie_root / 'nolanlab-ephys/scripts/yiming'
-        python_arg = f"{uv_directory}/sort_on_comp.py --mice={mouse} --days={day} --sessions={sessions_string} --protocols={protocol} --data_folder={data_folder} --deriv_folder={deriv_folder} --filepaths_csv={path_to_all_filepaths}"
+        python_arg1 = f"{uv_directory}/sort_on_comp.py --mice={mouse} --days={day} --sessions={sessions_string} --protocols={protocol} --data_folder={data_folder} --deriv_folder={deriv_folder} --filepaths_csv={path_to_all_filepaths}"
+        python_arg2 = f"{uv_directory}/make_simple_probe_plots.py --mice={mouse} --days={day} --sessions={sessions_string} --data_folder={data_folder} --deriv_folder={deriv_folder}"
         quality_arg = f"{uv_directory}/quality_control.py --mice={mouse} --days={day} --sessions={sessions_string} --protocols={protocol} --data_folder={data_folder} --deriv_folder={deriv_folder} --filepaths_csv={path_to_all_filepaths}"
         
         run_stage_script(stagein_dict, job_name=stagein_job_name)
-        run_python_script(uv_directory, python_arg, cores=8, email=email, staging=False, hold_jid=stagein_job_name, job_name=run_python_name)
+        run_python_script(uv_directory, python_arg1, cores=8, email=email, staging=False, hold_jid=stagein_job_name, job_name=run_python_name1)
+        run_python_script(uv_directory, python_arg2, cores=1, email=email, staging=False, hold_jid=run_python_name1, job_name=run_python_name2)
         time.sleep(2)
         # Do quality control
-        run_python_script(uv_directory, quality_arg, cores=8, email=email, staging=False, hold_jid=run_python_name, job_name=quality_name)
+        run_python_script(uv_directory, quality_arg, cores=8, email=email, staging=False, hold_jid=run_python_name1, job_name=quality_name)
         run_stage_script(stageout_dict, job_name=stageout_job_name, hold_jid=quality_name)
