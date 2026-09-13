@@ -1,6 +1,6 @@
 from argparse import ArgumentParser
 from pathlib import Path
-from common_paths import  eddie_data_folder, eddie_deriv_folder
+from common_paths import  eddie_yiming_data_folder, eddie_yiming_deriv_folder
 from nolanlab_ephys.probe_info import rec_to_simple_probe, make_probe_plot
 from nolanlab_ephys.lab_utils import get_recording_folders, chronologize_paths
 
@@ -20,12 +20,12 @@ sessions = sessions_string.split(",")
 
 data_folder = parser.parse_args().data_folder
 if data_folder is None:
-    data_folder = eddie_data_folder
+    data_folder = eddie_yiming_data_folder
 data_folder = Path(data_folder)
 
 deriv_folder = parser.parse_args().deriv_folder
 if deriv_folder is None:
-    deriv_folder = eddie_deriv_folder
+    deriv_folder = eddie_yiming_deriv_folder
 deriv_folder = Path(deriv_folder)
 
 recording_paths = chronologize_paths(
