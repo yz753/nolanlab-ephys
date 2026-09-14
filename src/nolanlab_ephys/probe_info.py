@@ -64,7 +64,7 @@ def make_probe_plot(rec_path, save_path):
         fig.tight_layout()
         fig.savefig(save_path)
 
-    except:
-        print("Could not make probe plot.")
+    except Exception as e:
+        print(f"Could not make probe plot, error: {e}")
 
     return

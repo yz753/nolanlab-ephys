@@ -113,5 +113,5 @@ for mouse in mice:
         run_python_script(uv_directory, python_arg2, cores=1, email=email, staging=False, hold_jid=run_python_name1, job_name=run_python_name2)
         time.sleep(2)
         # Do quality control
-        run_python_script(uv_directory, quality_arg, cores=8, email=email, staging=False, hold_jid=run_python_name1, job_name=quality_name)
+        run_python_script(uv_directory, quality_arg, cores=8, email=email, staging=False, hold_jid=run_python_name2, job_name=quality_name)
         run_stage_script(stageout_dict, job_name=stageout_job_name, hold_jid=quality_name)

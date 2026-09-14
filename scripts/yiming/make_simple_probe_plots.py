@@ -35,7 +35,7 @@ recording_paths = chronologize_paths(
 for session, recording_path in zip(
     sessions, recording_paths, strict=True
 ):
-    probe_vector_representation = rec_to_simple_probe(recording_path)
+    # probe_vector_representation = rec_to_simple_probe(recording_path)
     output_folder = (
         deriv_folder 
         / f"M{mouse:02d}"
@@ -45,7 +45,8 @@ for session, recording_path in zip(
     output_folder.mkdir(parents=True, exist_ok=True)
     
     make_probe_plot(
-        probe_vector_representation, 
+        # probe_vector_representation, 
+        recording_path,
         save_path=
         (
             output_folder
